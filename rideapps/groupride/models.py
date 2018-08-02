@@ -26,6 +26,9 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete = models.SET_NULL, blank=True, null=True)
     rating = models.CharField(max_length = 1, blank = True, choices = RATINGS, default = None)
 
+    # def __str__(self):
+    #     return f"{self.date} {self.user} {self.get_rating_display()}"
+
 
 # class Ride(models.Model):
 #
