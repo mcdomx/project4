@@ -1,7 +1,7 @@
-header, footer {
+footer {
   padding: 15px 15px 50px 15px;
   color: orange;
-  background-color: lightblue;
+  /* background-color: darkgrey; */
 }
 
 footer {
@@ -14,6 +14,6 @@ header {
 }
 
 body {
-  margin-top: 125px;
+  margin-top: 70px;
   margin-bottom: 7vh;
 }

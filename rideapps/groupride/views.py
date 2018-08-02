@@ -6,10 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django import forms
 from django.contrib.auth.models import User
-
-
 from .models import Comment, Review
-
 import json
 
 def index(request):
@@ -66,5 +63,5 @@ class RegistrationForm(UserCreationForm):
 class Register(generic.CreateView):
     form_class = RegistrationForm
     success_url = reverse_lazy('login')
-    template_name = 'groupride/register.html'
+    template_name = 'registration/register.html'
 # END User Registration Form

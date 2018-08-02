@@ -16,32 +16,82 @@
   </head>
   <body>
     <!-- HEADER -->
-    <header class="justify-content-center fixed-top">
-      <div id="headerrow" class="row">
-        <div class="col-6"><a href="{% url 'index' %}">GroupRide</a></div>
-        <div class="col-6" align="right">
+    <!-- <header class="justify-content-center fixed-top"> -->
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark fixed-top">
+      <!-- Brand -->
+      <a class="navbar-brand" href="{% url 'index' %}">GroupRide</a>
+
+      <!-- User Name-->
+      <!-- {% if user.is_authenticated %}
+        <span class="navbar-text">
+          {{ user.first_name }}
+        </span>
+      {% endif %} -->
+
+      <!-- Toggler/collapsibe Button -->
+       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+         <span class="navbar-toggler-icon"></span>
+       </button>
+
+      <!-- Navbar Links -->
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+
+          <!-- Home -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">Home</a>
+          </li>
+
+          <!-- Ride Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+              Rides
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'rides' %}">View</a>
+              <a class="dropdown-item" href="{% url 'create_ride' %}">Create</a>
+            </div>
+          </li>
+
+          <!-- Route Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+              Routes
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'routes' %}">View</a>
+              <a class="dropdown-item" href="{% url 'create_route' %}">Create</a>
+            </div>
+          </li>
+
+          <!-- User -->
           {% if user.is_authenticated %}
-            <span>Logged in as: {{ user.first_name }} &nbsp
-            <button type="button" class="btn btn-warning btn-sm"><a href="{% url 'logout' %}">Logout</a></button>
-            </span>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
           {% else %}
-            <button type="button" class="btn btn-warning btn-sm"><a href="{% url 'login' %}">Login</a></button>
-            <button type="button" class="btn btn-warning btn-sm"><a href="{% url 'register' %}">Register</a></button>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
           {% endif %}
-        </div>  <!-- end right column -->
-      </div> <!-- end row -->
-        <div id="cartrow" class="row">
-        </div>
-      </div> <!-- end row -->
-    </header>
+
+
+        </ul>
+      </div>
+
+    </nav>
+    <!-- </header> -->
     <!-- end HEADER -->
 
       {% block body %}
       {% endblock %}
 
       <!-- FOOTER -->
-      <footer class="row justify-content-left fixed-bottom">
-        <div class="col-3">created by Mark McDonald</div>
+      <footer class="row justify-content-left fixed-bottom bg-dark">
+        <div class="col">created by Mark McDonald</div>
       </footer>
       <!-- end FOOTER -->
 
