@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import generic
 from django import forms
 from django.contrib.auth.models import User
-from .models import Comment, Review
+from .models import Comment, Review, Route, Ride
 import json
 
 def index(request):

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Comment, Review
+from .models import Comment, Review, Route, Ride
 
 
 class ReviewAdmin(admin.ModelAdmin):
@@ -13,3 +13,15 @@ class CommentAdmin(admin.ModelAdmin):
 	list_filter = ('date','user')  #will allow items to be filtered
 
 admin.site.register(Comment, CommentAdmin)
+
+class RouteAdmin(admin.ModelAdmin):
+	list_display = ('created_by', 'miles', 'vertical_feet', 'origin')  #field will be displayed in column
+	list_filter = ('created_by', 'miles', 'vertical_feet')  #will allow items to be filtered
+
+admin.site.register(Route, RouteAdmin)
+
+class RideAdmin(admin.ModelAdmin):
+	list_display = ('created_by','created_on', 'ride_date', 'private')  #field will be displayed in column
+	list_filter = ('created_by','created_on', 'ride_date', 'private')  #will allow items to be filtered
+
+admin.site.register(Ride, RideAdmin)
