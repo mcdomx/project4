@@ -36,7 +36,8 @@ class Review(models.Model):
 class Route(models.Model):
     created_by = models.ForeignKey(User, on_delete = models.SET_NULL, blank = True, null = True, related_name = "created_routes")
     created_on = models.DateTimeField(auto_now_add = True, editable = False, blank = False)
-    miles = models.DecimalField(max_digits = 4, decimal_places = 1, blank = True, null = True)
+    route_name = models.CharField(max_length = 256, blank = True, null = True)
+    miles = models.DecimalField(max_digits = 6, decimal_places = 1, blank = True, null = True)
     vertical_feet = models.IntegerField(blank = True, null = True)
     origin = models.CharField(max_length = 64, blank = True, null = True)
     reviews = models.ManyToManyField(Review, blank = True)
@@ -47,6 +48,7 @@ class Route(models.Model):
 class Ride(models.Model):
     created_by = models.ForeignKey(User, on_delete = models.SET_NULL, blank = True, null = True, related_name = "created_rides")
     created_on = models.DateTimeField(auto_now_add = True, editable = False, blank = False)
+    ride_name = models.CharField(max_length = 256, blank = True, null = True)
     ride_date = models.DateTimeField(editable = True, blank = False, null = False)
     private = models.BooleanField(default = False)
     route = models.ForeignKey(Route, on_delete = models.SET_NULL, blank = True, null = True, related_name = "rides")
