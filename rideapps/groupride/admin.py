@@ -15,7 +15,7 @@ class CommentAdmin(admin.ModelAdmin):
 admin.site.register(Comment, CommentAdmin)
 
 class RouteAdmin(admin.ModelAdmin):
-	list_display = ('created_by', 'miles', 'vertical_feet', 'origin')  #field will be displayed in column
+	list_display = ('route_name', 'created_by', 'miles', 'vertical_feet', 'origin')  #field will be displayed in column
 	list_filter = ('created_by', 'miles', 'vertical_feet')  #will allow items to be filtered
 
 admin.site.register(Route, RouteAdmin)

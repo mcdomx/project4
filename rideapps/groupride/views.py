@@ -16,7 +16,8 @@ def index(request):
 
 
 def create_ride(request):
-    context = {}
+    routes = Route.objects.values('route_name','miles','vertical_feet')
+    context = {'routes': routes,}
     return render(request, "groupride/create_ride.html", context)
 
 
@@ -49,6 +50,9 @@ def routes(request):
     context = {}
     return render(request, "groupride/routes.html", context)
 
+def create_new_ride(request):
+    return True
+
 
 def create_new_route(request):
 
@@ -57,40 +61,32 @@ def create_new_route(request):
     vertical_feet = request.POST.get("vertical_feet")
     origin = request.POST.get("origin")
 
-    new_route = Route()
-    new_route.created_by = request.user
-    new_route.created_on = datetime.datetime.now()
-
     try:
         Route.objects.get(route_name = route_name)
-
-    except MultipleObjectsReturned as e:
         context = {
             'success': False,
-            'error': f"A rounte with the name '{route_name}' already exists"
+            'headline': "Sorry! ",
+            'message': f"A route with the name '{route_name}' already exists. Choose a new route name."
         }
         return JsonResponse(context)
-    else:
+
+    except Route.DoesNotExist as e:
+        new_route = Route()
+        new_route.created_by = request.user
+        new_route.created_on = datetime.datetime.now()
         new_route.route_name = route_name
+        new_route.miles = float(miles)
+        new_route.vertical_feet = int(vertical_feet)
+        new_route.origin = origin
+        new_route.save()
 
-    new_route.miles = float(miles)
-    new_route.vertical_feet = int(vertical_feet)
-    new_route.origin = origin
-    new_route.save()
+        context = {
+            'success': True,
+            'headline': "Route created! ",
+            'message': f"'{route_name}' by '{request.user}'"
+        }
 
-    print(new_route)
-
-    context = {
-        'success': True,
-        'route_id': new_route.id,
-        'route_name': new_route.route_name
-    }
-
-    print(context)
-
-    return JsonResponse(context)
-
-
+        return JsonResponse(context)
 
 
 # START User registration form
