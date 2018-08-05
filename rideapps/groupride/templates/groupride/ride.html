@@ -6,5 +6,19 @@
   <div class="container">
     <h2>Ride</h2>
 
+    <div class="ride_header border rounded">
+      <div>
+        <span class=""><strong>{{ride.ride_name}}</strong></span>
+        <span class="">&nbsp Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </span>
+      </div>
+      <div>
+        <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
+      </div>
+      <div>
+        <span class="">{{ride.route.miles}} miles </span>
+        <span class="">{{ride.route.vertical_feet}} feet</span>
+      </div>
+    </div>
+
   </div>
 {% endblock %}

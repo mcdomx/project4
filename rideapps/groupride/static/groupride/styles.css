@@ -17,3 +17,15 @@ body {
   margin-top: 70px;
   margin-bottom: 7vh;
 }
+
+.route_header {
+  padding: 5px;
+  margin: 5px;
+  background-color: lightblue;
+}
+
+.ride_header {
+  padding: 5px;
+  margin: 5px;
+  background-color: orange;
+}

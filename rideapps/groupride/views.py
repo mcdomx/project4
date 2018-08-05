@@ -8,7 +8,8 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Comment, Review, Route, Ride
 from django.core.exceptions import MultipleObjectsReturned
-import json, datetime
+import json
+from datetime import datetime
 
 def index(request):
     context = {}
@@ -16,7 +17,7 @@ def index(request):
 
 
 def create_ride(request):
-    routes = Route.objects.values('route_name','miles','vertical_feet')
+    routes = Route.objects.values('id', 'route_name','miles','vertical_feet')
     context = {'routes': routes,}
     return render(request, "groupride/create_ride.html", context)
 
@@ -31,27 +32,78 @@ def login(request):
     return render(request, "groupride/login.html", context)
 
 
-def ride(request):
-    context = {}
+def ride(request,ride_id):
+    ride = Ride.objects.get(pk = ride_id)
+    context = {
+        "ride": ride,
+    }
     return render(request, "groupride/ride.html", context)
 
 
-def route(request):
-    context = {}
+def route(request, route_id):
+    route = Route.objects.get(pk = route_id)
+    context = {
+        "route": route,
+    }
     return render(request, "groupride/route.html", context)
 
 
 def rides(request):
-    context = {}
+    rides = Ride.objects.all()
+
+    context = {'rides': rides,}
     return render(request, "groupride/rides.html", context)
 
 
 def routes(request):
-    context = {}
+    routes = Route.objects.values('id', 'route_name', 'origin', 'miles','vertical_feet')
+    context = {'routes': routes,}
     return render(request, "groupride/routes.html", context)
 
 def create_new_ride(request):
-    return True
+    ride_name = request.POST.get("ride_name")
+    rd = []
+    rd = request.POST.get("ride_date").split(',')
+
+    ride_date = datetime(int(rd[0]), int(rd[1]), int(rd[2]), int(rd[3]), int(rd[4]))
+    # ride_date = datetime(rd[0], rd[1], rd[2], rd[3], rd[4])
+    print(ride_date)
+
+    route_id = request.POST.get("route_id")
+
+    # see if a ride with the given name on the same day already exists
+    try:
+        # Ride.objects.get(ride_name = ride_name, ride_date = ride_date)
+
+        Ride.objects.get(   ride_name = ride_name,
+                            ride_date__year = ride_date.year,
+                            ride_date__month = ride_date.month,
+                            ride_date__day = ride_date.day)
+        context = {
+            'success': False,
+            'headline': "Sorry! ",
+            'message': f"A ride with the name '{ride_name}' already exists on '{ride_date}'. Choose a new route name."
+        }
+        return JsonResponse(context)
+
+    # if a route with smae name on same day doesn't exist, the create it
+    except Ride.DoesNotExist as e:
+            new_ride = Ride()
+            new_ride.created_by = request.user
+            new_ride.created_on = datetime.now()
+            new_ride.ride_name = ride_name
+            new_ride.ride_date = ride_date
+            new_ride.route_id = route_id
+            new_ride.save()
+
+            context = {
+                'success': True,
+                'headline': "Ride created! ",
+                'message': f"'{ride_name}' by '{request.user}'.  Check back later to see who is coming!"
+            }
+
+            return JsonResponse(context)
+
 
 
 def create_new_route(request):
@@ -61,6 +113,7 @@ def create_new_route(request):
     vertical_feet = request.POST.get("vertical_feet")
     origin = request.POST.get("origin")
 
+    # see if a route with the given name already exists
     try:
         Route.objects.get(route_name = route_name)
         context = {
@@ -70,10 +123,11 @@ def create_new_route(request):
         }
         return JsonResponse(context)
 
+    # if the route with the name doesn't exists then create it
     except Route.DoesNotExist as e:
         new_route = Route()
         new_route.created_by = request.user
-        new_route.created_on = datetime.datetime.now()
+        new_route.created_on = datetime.now()
         new_route.route_name = route_name
         new_route.miles = float(miles)
         new_route.vertical_feet = int(vertical_feet)
