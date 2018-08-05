@@ -23,12 +23,10 @@ function load_reviews() {
       //extract JSON data from request
       const response = JSON.parse(get_reviews.responseText);
 
-        console.log(response);
-        for (review in response.reviews) {
-          console.log(response.reviews[review].text)
-        
-          // add_review_to_window(response[review], true);
-        } // end for loop
+      for (review in response.reviews){
+        console.log(response.reviews[review])
+        add_review_to_listing(response.reviews[review])
+      }
 
     }; // end onload
 
@@ -44,46 +42,66 @@ function load_reviews() {
 
 
 // append a new post to the current post_listing window
-function add_post_to_window(post, full_loading=false) {
+function add_review_to_listing(review) {
 
-  const post_div = document.createElement('div');
-  const post_listing = document.querySelector('#post_listing');
+  const reviews_listing = document.querySelector('#reviews_listing');
+  const review_div = document.createElement('div');
+
+  // CARD
+  const card = document.createElement('div');
+  card.className = "card";
+  card.style["width"] = "100%";
+
+  // CARD BODY
+  const card_body = document.createElement('div');
+  card_body.className = "card-body";
+
+  // CARD TITLE LINES
+  const card_head1 = document.createElement('div');
+  card_head1.className = "card-subtitle mb-2 text-muted";
+  card_head1.innerHTML = `${review.user} (${review.date})`
+  const card_head2 = document.createElement('div');
+  card_head1.className = "card-subtitle mb-2 text-muted";
+  card_head2.innerHTML = `Rating: ${review.rating}`
+  //TODO - add rating text
+
+  // CARD TEXT
+  const card_text = document.createElement('div');
+  var card_text_attr = document.createAttribute("class");
+  card_text.className = "card-text";
 
 
-  if (post.user === localStorage.getItem('display_name')) {
-    // if post is from owner, put on the right side
-    post_div.className = "col-8 offset-4  rounded mb-2 py-1 self_chatbox";
-  } else {
-    // put on left side
-    post_div.className = "col-8           rounded mb-2 py-1 other_chatbox";
-  } // end if-else
+  //BUILD CARD
+  card_body.appendChild(card_head1);
+  card_body.appendChild(card_head2);
+  card_body.appendChild(card_text);
 
-  //post text for display
-  post_time = disp_time(post.time, true);
-  post_div.innerHTML = `${post.user} (${post_time}): ${post.txt}`;
+  card_text.appendChild(p_owner);
+  card_text.appendChild(p_lastpost);
+  card_body.appendChild(card_text);
+  anchor.appendChild(card_head);
+  anchor.appendChild(card_body);
+  card.appendChild(anchor);
+  row.appendChild(card);
 
-  // add the animation
-  // find the previous newpost id and remove that id from the element
-  prev_post = document.getElementById('newpost');
-  if (prev_post !== null) {
-    prev_post.removeAttribute("id");
-  }
-
-  // now, add newpost id to the newly posted item
-  post_div.setAttribute("id", `newpost`);
-
-  //add the newly created posting to the chat listing
-  chat_listing.appendChild(post_div);
-  chat_listing.scrollTop = chat_listing.scrollHeight
-
-  // run the animation, but only when not loading the full list
-  if (full_loading) {
-    post_div.style.animationDuration = "0s";
-  }
-  post_div.style.animationPlayState = 'running';
-
-  //update header elements
-  document.querySelector('#header_posts').innerHTML = post.num_posts;
-  document.querySelector('#header_last').innerHTML = disp_time(post.time);
+  //add the new row to the top of the channel listing
+  chat_window = document.querySelector('#channel_listing');
+  chat_window.insertBefore(row, chat_window.firstChild);
 
 } // end add_post_to_window()
+
+// convert epoch time to human readbale time for display
+function disp_time(epoch_time, short=false) {
+    t = new Date(epoch_time);
+    y = t.getFullYear().toString().slice(-2);
+    m = t.getMonth()+1;
+    d = t.getDate();
+    h = t.getHours();
+    mm = ("0" + (t.getMinutes())).slice(-2);
+
+    if (short) {
+      return `${m}/${d} ${h}:${mm}`; //short form
+    } else {
+      return `${m}/${d}/${y} ${h}:${mm}`; //long form
+  }
+}
