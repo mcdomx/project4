@@ -29,3 +29,13 @@ body {
   margin: 5px;
   background-color: orange;
 }
+
+.self_chatbox {
+  background-color: #368ef2;
+  color: white;
+}
+
+.other_chatbox {
+  background-color: lightgrey;
+  color: black;
+}

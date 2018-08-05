@@ -7,6 +7,7 @@ urlpatterns = [
     path("create_new_route", views.create_new_route, name="create_new_route"),
     path("create_new_ride", views.create_new_ride, name="create_new_ride"),
     path("create_route/", views.create_route, name="create_route"),
+    path("get_reviews", views.get_reviews, name="get_reviews"),
     path("ride/<int:ride_id>", views.ride, name="ride"),
     path("route/<int:route_id>", views.route, name="route"),
     path("rides/", views.rides, name="rides"),

@@ -42,10 +42,35 @@ def ride(request,ride_id):
 
 def route(request, route_id):
     route = Route.objects.get(pk = route_id)
+
     context = {
         "route": route,
     }
+
+
     return render(request, "groupride/route.html", context)
+
+
+def get_reviews(request):
+    route_id = request.POST.get("route_id")
+    print(route_id)
+    route = Route.objects.get(pk = route_id)
+    reviews = route.reviews.all()
+
+    reviews_dict = {}
+    for r in reviews:
+        reviews_dict[r.id] = {
+            "text": r.text,
+            "rating": r.rating
+        }
+
+    context = {
+        "reviews": reviews_dict,
+    }
+
+    return JsonResponse(context)
+
+
 
 
 def rides(request):
