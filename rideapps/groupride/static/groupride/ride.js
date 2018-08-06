@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setup_chat_elemnts()
   setup_confirmation_elements();
+  load_confirmed_riders();
   load_posts(ride_id);
 
 });
@@ -13,47 +14,109 @@ function setup_confirmation_elements() {
 
   btn = document.getElementById('btn_confirm');
   btn.onclick = () => {
-    set_confirmation(true);
+    toggle_confirmation();
+
   }
 
-  set_confirmation(false);
+  // set_confirmation(false);
 
 } // end setup_confirmation_elements()
 
-function set_confirmation(toggle) {
+function load_confirmed_riders() {
 
-  const get_conf_status = new XMLHttpRequest();
+  //clear all confrimed riders from the list
+  listing = document.getElementById('confirmed_list');
+  while (listing.firstChild) {
+    listing.removeChild(listing.firstChild);
+  }
 
-  get_conf_status.open('POST', '/get_conf_status');
-  get_conf_status.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+  //get conformed riders from server
+  // initialize new request
+  const get_confirmed_riders = new XMLHttpRequest();
+
+  get_confirmed_riders.open('POST', '/get_confirmed_riders');
+  get_confirmed_riders.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
 
   //when request is completed
-  get_conf_status.onload = () => {
+  get_confirmed_riders.onload = () => {
     //extract JSON data from request
-    const response = JSON.parse(get_conf_status.responseText);
+    const response = JSON.parse(get_confirmed_riders.responseText);
 
-    btn = document.getElementById('btn_confirm');
-    txt = document.getElementById('conf_status');
-    //if the user is confirmed, setup unjoin confirmation
-    if (response.confirmed == true) {
-      txt.innerHTML = "You are confirmed for this ride"
-      btn.className = "btn btn-danger col-5 mr-0";
-      btn.innerHTML = "Unjoin"
-    } else {
-      txt.innerHTML = "You havn't confirmed this ride"
-      btn.className = "btn btn-success col-5 mr-0";
-      btn.innerHTML = "Join"
-    }
+      //clear any posts that are already on the screen
+      listing = document.querySelector('#confirmed_list');
+      while (listing.firstChild) {
+        listing.removeChild(listing.firstChild);
+      }
+
+      //add riders
+      for (rider in response) {
+        add_rider_to_confirmed(response[rider]);
+      } // end for loop
+
+
+      //if current user is in the list of confirmed riders set conf message
+      btn = document.getElementById('btn_confirm');
+      txt = document.getElementById('conf_status');
+      //if the user is confirmed, setup unjoin confirmation
+      if (user_id in response) {
+        txt.innerHTML = "You are confirmed for this ride"
+        btn.className = "btn btn-danger col-5 mr-0";
+        btn.innerHTML = "Unjoin"
+      } else {
+        txt.innerHTML = "You haven't confirmed this ride"
+        btn.className = "btn btn-success col-5 mr-0";
+        btn.innerHTML = "Join"
+      }
+
+  }; // end onload
+
+  // Add route id to request sent to server
+  const data = new FormData();
+  data.append('ride_id', ride_id);
+
+  // Send request
+  get_confirmed_riders.send(data);
+  return false; // avoid sending the form and creating an HTTP POST request
+
+} // end load_confirmed_riders()
+
+
+function add_rider_to_confirmed(rider) {
+
+  const rider_div = document.createElement('div');
+  rider_div.className = "confirmed_rider"
+  rider_div.innerHTML = rider;
+
+  listing = document.querySelector('#confirmed_list');
+
+  //add the newest confirmations to the top
+  listing.insertBefore(rider_div, listing.firstChild);
+
+} //end add_rider_to_confirmed()
+
+
+// toggle confirmatin status on the server side
+function toggle_confirmation() {
+
+  const toggle_status = new XMLHttpRequest();
+
+  toggle_status.open('POST', '/toggle_confirmation');
+  toggle_status.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+
+  //when request is completed
+  toggle_status.onload = () => {
+    //extract JSON data from request
+    load_confirmed_riders();
+
   }; // end onload
 
   // Add route id to request sent to server
   const data = new FormData();
   data.append('user_id', user_id);
   data.append('ride_id', ride_id);
-  data.append('toggle', toggle);
 
   // Send request
-  get_conf_status.send(data);
+  toggle_status.send(data);
   return false; // avoid sending the form and creating an HTTP POST request
 
 } // end set_confirmation()
@@ -93,8 +156,6 @@ function add_post() {
 
 
       if (response.success == true) {
-
-        console.log(response.success);
         // clear form
         t.value="";
 

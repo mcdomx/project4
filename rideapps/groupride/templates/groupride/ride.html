@@ -6,7 +6,8 @@
   <div class="container">
     <h2>Ride</h2>
 
-    <div class="ride_header border rounded">
+    <!-- RIDE HEADER -->
+    <div class="ride_header border rounded" style="min-width: 20rem; max-width: 50rem">
       <div>
         <h3>{{ride.ride_name}}</h3>
         <div>Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </div>
@@ -19,32 +20,46 @@
         <span class="">{{ride.route.vertical_feet}} feet</span>
       </div>
     </div>
+    <!-- END RIDE HEADER -->
 
+    <!-- CONFIRMATION BLOCK -->
     {% if user.is_authenticated %}
       <!-- set confirmation row with javascript to allow toggling without screen refresh -->
-      <div id="confirmation">
+      <div id="confirmation" class="container border border rounded ml-1 mr-0 my-2" style="min-width: 20rem; max-width: 50rem">
         <div class="row my-2" style="width: 100%">
           <h5 id="conf_status" class="col-7">You havn't confirmed this ride</h5>
           <button type="button" id="btn_confirm" class="btn btn-success col-5 mr-0">Join</button>
         </div>
       </div>
     {% endif %}
+    <!-- END CONFIRMATION BLOCK -->
+
+    <!-- CONFIRMED RIDERS -->
+
+    <a class="" data-toggle="collapse" href="#confirmed_block" style="text-align: center; vertical-align: middle;">
+      <div id="confirmed" class="container border bg-success rounded ml-1 mr-0 my-2" style="min-width: 20rem; max-width: 50rem">
+        <h3>Confirmed Riders</h3>
+      </div>
+    </a>
 
 
 
+    <div id="confirmed_block" class="collapse container ml-1 mr-0 my-2" style="min-width: 20rem; max-width: 50rem">
+      <div id="confirmed_list" class="card card-body">
+        list of confirmed riders.
+      </div>
+    </div>
 
-
+    <!-- END CONFIRMED RIDERS -->
 
     <!-- COMMENTS SECTION -->
     <div class="container border border rounded ml-1 mr-0" style="min-width: 20rem; max-width: 50rem">
 
-      <!-- ROW FOR ALL COMMENT ELEMENTS -->
-      <div id="post_listing" class="container mb-2" style="overflow: scroll; height:55vh;">
-      </div>
-    <!-- </div>  -->
-    <!-- ROW FOR ALL COMMENT ELEMENTS -->
+      <!-- COMMENTS -->
+      <div id="post_listing" class="container mb-2" style="overflow: scroll; height:55vh;"></div>
+      <!-- END COMMENTS -->
 
-      <!-- ROW FOR COMMENT POST -->
+      <!-- ADD POST -->
       <div class="row">
         <div class="col align-self-end">
           <div id="frm_add_post">
@@ -53,14 +68,16 @@
               <div class="input-group-append">
                 <button type="button" id="btn_add_post" class="btn btn-success" disabled=true>Post</button>
               </div>
-            </div> <!-- END INPUT GROUP -->
+            </div> <!-- end input group -->
           </div> <!-- end form -->
         </div> <!-- end col for comment post -->
-      </div> <!-- END ROW FOR COMMENT POST -->
-    </div> <!-- end comments section -->
+      </div> <!-- END ADD POST -->
+
+    </div> <!-- END COMMENTS -->
 
   </div> <!-- END PAGE CONTAINER -->
 
+  <!-- script allows templating variables to be accessible in javascript -->
   <script>
     var ride_id = {{ ride.id }}
     var user_id = '{{ user.username }}'

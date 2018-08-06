@@ -18,7 +18,10 @@ def index(request):
 
 def create_ride(request):
     routes = Route.objects.values('id', 'route_name','miles','vertical_feet')
-    context = {'routes': routes,}
+    users = User.objects.all()
+    context = {
+        'routes': routes,
+        'users': users,}
     return render(request, "groupride/create_ride.html", context)
 
 
@@ -121,80 +124,64 @@ def add_comment(request):
 
 def rides(request):
     rides = Ride.objects.all()
-
-    context = {'rides': rides,}
+    context = {
+        'rides': rides,
+        }
     return render(request, "groupride/rides.html", context)
 
 
-def get_conf_status(request):
+# change the user's confirmation status for a group ride
+def toggle_confirmation(request):
     ride_id = request.POST.get("ride_id")
-    user_id = request.POST.get("user_id")
-    toggle = request.POST.get("toggle")
-
-    if Ride.confirmed_riders.filter(user.id == user_id).exists():
-        # remove the rider if toggle is true
-        if (toggle):
-            ride.confirmed_riders.remove(user)
-            confirmed = False
-        else:
-            confirmed = True
-    else:
-        # add the rider if toggle is true
-        if (toggle):
-            ride.confirmed_riders.add(user)
-            confirmed = True
-        else:
-            confrimed = False
-
-    context = {
-        "confirmed": confirmed
-    }
-
-    return JsonResponse(context)
-
-
-def toggle_conf_status(request):
-    ride_id = request.POST.get("ride_id")
-    user_id = request.POST.get("user_id")
     ride = Ride.objects.get(id = ride_id)
-    user = User.objects.get(id = user_id)
 
-    if Ride.confirmed_riders.filter(user.id == user_id).exists():
-        # remove the rider
+    user_id = request.POST.get("user_id")
+    user = User.objects.get(username = user_id)
+
+    #value is True if user is a confirmed rider, otherwise it is false
+    rider_confirmed = ride.confirmed_riders.filter(username = user_id).exists()
+
+    if rider_confirmed:
         ride.confirmed_riders.remove(user)
-        confirmed = False
-    else:
-        # add the rider
+    else: # rider is not confirmed
         ride.confirmed_riders.add(user)
-        confrimed = True
+
+    #get updated confirmation status
+    rider_confirmed = ride.confirmed_riders.filter(username = user_id).exists()
 
     context = {
-        "confirmed": confirmed
+        "confirmed": rider_confirmed
     }
 
     return JsonResponse(context)
 
-
+# serve routes.html page with list of routes to be used in templating
 def routes(request):
     routes = Route.objects.values('id', 'route_name', 'origin', 'miles','vertical_feet')
     context = {'routes': routes,}
     return render(request, "groupride/routes.html", context)
 
+# create a new group ride
 def create_new_ride(request):
     ride_name = request.POST.get("ride_name")
     rd = []
     rd = request.POST.get("ride_date").split(',')
 
     ride_date = datetime(int(rd[0]), int(rd[1]), int(rd[2]), int(rd[3]), int(rd[4]))
-    # ride_date = datetime(rd[0], rd[1], rd[2], rd[3], rd[4])
-    print(ride_date)
 
     route_id = request.POST.get("route_id")
 
+    pr = request.POST.get("private_ride")
+    if pr == 'true':
+        private_ride = True
+    else:
+        private_ride = False
+
+    invited_rider_list = request.POST.get("invited_rider_list")
+    rider_list = invited_rider_list.split(',')
+
     # see if a ride with the given name on the same day already exists
     try:
-        # Ride.objects.get(ride_name = ride_name, ride_date = ride_date)
-
         Ride.objects.get(   ride_name = ride_name,
                             ride_date__year = ride_date.year,
                             ride_date__month = ride_date.month,
@@ -214,7 +201,12 @@ def create_new_ride(request):
             new_ride.ride_name = ride_name
             new_ride.ride_date = ride_date
             new_ride.route_id = route_id
+            new_ride.private = private_ride
             new_ride.save()
+            if private_ride:
+                for rider in rider_list:
+                    r = User.objects.get(username = rider)
+                    new_ride.invited_riders.add(r)
 
             context = {
                 'success': True,
@@ -224,6 +216,7 @@ def create_new_ride(request):
 
             return JsonResponse(context)
 
+# return comments for ride
 def get_ride_comments(request):
     ride_id = request.POST.get("ride_id")
     ride = Ride.objects.get(pk = ride_id)
@@ -244,7 +237,19 @@ def get_ride_comments(request):
 
     return JsonResponse(context)
 
+# return a dictionary of user confirmed for a ride with {username: first initial. lastname}
+def get_confirmed_riders(request):
+    ride_id = request.POST.get("ride_id")
+    ride = Ride.objects.get(pk = ride_id)
+    confirmed_riders = ride.confirmed_riders.all()
 
+    context = {}
+    for r in confirmed_riders:
+        context[r.username] = f'{r.first_name[0]}. {r.last_name}'
+
+    return JsonResponse(context)
+
+# check if route already exists and create it if it does not
 def create_new_route(request):
 
     route_name = request.POST.get("route_name")
@@ -297,9 +302,3 @@ class Register(generic.CreateView):
     success_url = reverse_lazy('login')
     template_name = 'registration/register.html'
 # END User Registration Form
-
-# Exception Classes
-# class RouteNameExists(Exception):
-#     pass
-
-# end Exception Classes
