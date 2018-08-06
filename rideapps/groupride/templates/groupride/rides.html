@@ -11,13 +11,53 @@
     {% endfor %}
 
     <div class="panel-group">
-    {% for ride in rides %}
+    <h3>Upcoming Rides</h3>
+    {% for ride in upcoming_rides %}
+
+      {% if ride.private is True and user in ride.invited_riders.all or ride.private is not True %}
+
+        <a href="/ride/{{ride.id}}">
+          <div class="ride_header border rounded" style="min-width: 20rem; max-width: 50rem">
+            <div>
+              <h5>{{ride.ride_name}}
+                {% if ride.private is True %}
+                  <span class="badge badge-pill badge-warning">Private</span>
+                  {% if user not in ride.confirmed_riders.all %}
+                    <span class="badge badge-pill badge-danger">Unconfirmed</span>
+                  {% endif %}
+                {% endif %}
+
+                {% if user in ride.confirmed_riders.all %}
+                  <span class="badge badge-pill badge-success">Confirmed</span>
+                {% endif %}
+
+
+              </h5>
+              <div>Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </div>
+            </div>
+            <div>
+              <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
+            </div>
+            <div>
+              <span class="">{{ride.route.miles}} miles </span>
+              <span class="">{{ride.route.vertical_feet}} feet</span>
+            </div>
+          </div>
+        </a>
+      {% endif %}
+
+    {% endfor %}
+    </div> <!-- end panel group -->
+
+    <div class="panel-group">
+    <h3>Past Rides</h3>
+    {% for ride in past_rides %}
 
     <a href="/ride/{{ride.id}}">
-      <div class="ride_header border rounded">
+      <div class="ride_header border rounded" style="min-width: 20rem; max-width: 50rem">
         <div>
-          <span class=""><strong>{{ride.ride_name}}</strong></span>
-          <span class="">&nbsp Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </span>
+          <h5>{{ride.ride_name}}</h5>
+          <div>Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </div>
         </div>
         <div>
           <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
@@ -28,7 +68,6 @@
         </div>
       </div>
     </a>
-
 
     {% endfor %}
     </div> <!-- end panel group -->

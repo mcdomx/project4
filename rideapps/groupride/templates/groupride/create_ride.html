@@ -59,7 +59,7 @@
           </div>
 
           <select class="custom-select" id="invite_select" disabled>
-            <option selected>invite riders...</option>
+            <option selected disabled>invite riders...</option>
             {% for rider in users %}
               {% if rider.username != user.username %}
                 <option value={{rider.username}}>{{rider.first_name}} {{rider.last_name}} ({{rider.username}})</option>

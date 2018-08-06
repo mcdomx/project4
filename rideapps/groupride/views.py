@@ -9,10 +9,20 @@ from django.contrib.auth.models import User
 from .models import Comment, Review, Route, Ride
 from django.core.exceptions import MultipleObjectsReturned
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 def index(request):
-    context = {}
+    upcoming_rides = Ride.objects.filter(ride_date__gte = datetime.now()).order_by('ride_date')
+
+    if request.user.is_authenticated:
+        unconfirmed_rides = Ride.objects.filter(ride_date__gte = datetime.now()).filter(invited_riders__in=[request.user]).all()
+    else:
+        unconfirmed_rides = None
+
+    context = {
+        'upcoming_rides': upcoming_rides,
+        'unconfirmed_rides': unconfirmed_rides,
+        }
     return render(request, "groupride/index.html", context)
 
 
@@ -123,9 +133,12 @@ def add_comment(request):
 
 
 def rides(request):
-    rides = Ride.objects.all()
+    upcoming_rides = Ride.objects.filter(ride_date__gte = datetime.now()).order_by('ride_date')
+    past_rides = Ride.objects.filter(ride_date__lt = datetime.now()).order_by('ride_date').reverse()
+
     context = {
-        'rides': rides,
+        'upcoming_rides': upcoming_rides,
+        'past_rides': past_rides,
         }
     return render(request, "groupride/rides.html", context)
 

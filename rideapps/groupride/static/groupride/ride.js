@@ -2,7 +2,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   // wait till page loads before setting up javascript elements
 
-  setup_chat_elemnts()
+  if (early_exit) {
+    return;
+  }
+
+  setup_chat_elemnts();
   setup_confirmation_elements();
   load_confirmed_riders();
   load_posts(ride_id);
@@ -50,9 +54,8 @@ function load_confirmed_riders() {
 
       //add riders
       for (rider in response) {
-        add_rider_to_confirmed(response[rider]);
+        add_rider_to_confirmed(rider, response[rider]);
       } // end for loop
-
 
       //if current user is in the list of confirmed riders set conf message
       btn = document.getElementById('btn_confirm');
@@ -81,18 +84,28 @@ function load_confirmed_riders() {
 } // end load_confirmed_riders()
 
 
-function add_rider_to_confirmed(rider) {
+function add_rider_to_confirmed(username, rider) {
 
   const rider_div = document.createElement('div');
   rider_div.className = "confirmed_rider"
   rider_div.innerHTML = rider;
 
-  listing = document.querySelector('#confirmed_list');
+  
 
+  listing = document.querySelector('#confirmed_list');
   //add the newest confirmations to the top
   listing.insertBefore(rider_div, listing.firstChild);
 
 } //end add_rider_to_confirmed()
+
+
+// append a remove topping button (- pill)
+
+
+
+  update_modal();
+} // end remove button on click
+
 
 
 // toggle confirmatin status on the server side
@@ -124,16 +137,17 @@ function toggle_confirmation() {
 
 function setup_chat_elemnts() {
   // enable display post review button when text is entered
-  txt = document.querySelector('#txt_add_post');
-  btn = document.querySelector('#btn_add_post');
-  txt.onkeyup = () => {
-      if (txt.value.length > 1)
-          btn.disabled = false;
+  txt_add_post = document.getElementById('txt_add_post');
+  btn_add_post = document.getElementById('btn_add_post');
+
+  txt_add_post.onkeyup = () => {
+      if (txt_add_post.value.length > 1)
+          btn_add_post.disabled = false;
       else
-          btn.disabled = true;
+          btn_add_post.disabled = true;
   } // end onkeyup
 
-  btn.onclick = () => {
+  btn_add_post.onclick = () => {
     add_post();
   }
 

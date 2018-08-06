@@ -41,6 +41,7 @@ class Route(models.Model):
     vertical_feet = models.IntegerField(blank = True, null = True)
     origin = models.CharField(max_length = 64, blank = True, null = True)
     reviews = models.ManyToManyField(Review, blank = True)
+    # gpxfile = models.FileField()
 
     def __str__(self):
         return f'{self.origin} ({self.miles} miles)'

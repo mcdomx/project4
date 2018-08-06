@@ -64,9 +64,30 @@ function add_rider_to_invite_list () {
   rider_text = invite_select.options[invite_select.selectedIndex].text;
 
   rider_div = document.createElement('div');
-  rider_div.id = invite_select.options[invite_select.selectedIndex].value;
+  rider_id = invite_select.options[invite_select.selectedIndex].value;
+  rider_div.id = rider_id;
   rider_div.innerHTML = `${rider_text}`;
-  invited_riders.appendChild(rider_div);
+
+
+  // add a remove button to the invited users list
+  const remove_but = document.createElement('span');
+  remove_but.className = "badge badge-pill badge-danger ml-2";
+  remove_but.innerHTML = "&times;";
+
+  remove_but.onclick = (self) => {
+    // code to remove item from the list
+    this_item = self.path[1];
+    this_item.parentNode.removeChild(this_item);
+    sel_item = document.querySelector(`option[value=${this_item.id}`);
+    sel_item.disabled = false;
+  }
+
+    rider_div.appendChild(remove_but);
+    invited_riders.appendChild(rider_div);
+
+  //remove user from list of people that can be invited
+  sel_item = document.querySelector(`option[value=${rider_id}`);
+  sel_item.disabled = true;
 }
 
 
@@ -90,7 +111,8 @@ function create_ride() {
   route_id = r.options[r.selectedIndex].value;
 
   var private_ride = false;
-  invited_rider_list = []
+  invited_rider_list = [];
+
   p = document.getElementById('ckbox_private');
   if (p.checked == true) {
     private_ride = true;

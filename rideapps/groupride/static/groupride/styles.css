@@ -18,6 +18,11 @@ body {
   margin-bottom: 7vh;
 }
 
+a:hover {
+    text-decoration: none;
+    color: darkblue;
+}
+
 
 .route_header {
   padding: 5px;
@@ -28,7 +33,7 @@ body {
 .ride_header {
   padding: 5px;
   margin: 5px;
-  background-color: orange;
+  background-color: lightblue;
 }
 
 .self_chatbox {
