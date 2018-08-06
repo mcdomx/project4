@@ -71,6 +71,52 @@ def get_reviews(request):
     return JsonResponse(context)
 
 
+def add_review(request):
+    route_id = request.POST.get("route_id")
+    rating = request.POST.get("rating")
+    text = request.POST.get("text")
+    date = datetime.now()
+    user = request.user
+
+    new_review = Review()
+    new_review.rating = rating
+    new_review.text = text
+    new_review.date = date
+    new_review.user = user
+    new_review.save()
+
+    route = Route.objects.get(pk = route_id)
+    route.reviews.add(new_review)
+    route.save()
+
+    context = {
+        "success": True,
+    }
+
+    return JsonResponse(context)
+
+def add_comment(request):
+    ride_id = request.POST.get("ride_id")
+    text = request.POST.get("text")
+    date = datetime.now()
+    user = request.user
+
+    new_comment = Comment()
+    new_comment.text = text
+    new_comment.date = date
+    new_comment.user = user
+    new_comment.save()
+
+    ride = Ride.objects.get(pk = ride_id)
+    ride.comments.add(new_comment)
+    ride.save()
+
+    context = {
+        "success": True,
+    }
+
+    return JsonResponse(context)
+
 
 
 def rides(request):
@@ -129,6 +175,25 @@ def create_new_ride(request):
 
             return JsonResponse(context)
 
+def get_ride_comments(request):
+    ride_id = request.POST.get("ride_id")
+    ride = Ride.objects.get(pk = ride_id)
+    comments = ride.comments.all()
+
+    comments_dict = {}
+    for r in comments:
+        comments_dict[r.id] = {
+            "user": f'{r.user.first_name[0]}. {r.user.last_name}',
+            "user_id": r.user.username,
+            "date": r.date,
+            "text": r.text,
+        }
+
+    context = {
+        "comments": comments_dict,
+    }
+
+    return JsonResponse(context)
 
 
 def create_new_route(request):

@@ -36,7 +36,7 @@
             <div class="input-group mb-3">
               <input type="text" id="txt_add_post" class="form-control" placeholder="add message ... ">
               <div class="input-group-append">
-                <button type="button" id="btn_add_post" class="btn btn-success">Post</button>
+                <button type="button" id="btn_add_post" class="btn btn-success" disabled=true>Post</button>
               </div>
             </div> <!-- END INPUT GROUP -->
           </div> <!-- end form -->
@@ -45,4 +45,12 @@
     </div> <!-- end comments section -->
 
   </div> <!-- END PAGE CONTAINER -->
+
+  <script>
+    var ride_id = {{ ride.id }}
+    var user_id = '{{ user.username }}'
+  </script>
+
+  <script src="../static/groupride/ride.js"></script>
+
 {% endblock %}
