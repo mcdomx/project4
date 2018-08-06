@@ -2,6 +2,64 @@
 document.addEventListener('DOMContentLoaded', () => {
   // wait till page loads before setting up javascript elements
 
+  setup_chat_elemnts()
+  setup_confirmation_elements();
+  load_posts(ride_id);
+
+});
+// ########################  end DOMContentLoaded ########################
+
+function setup_confirmation_elements() {
+
+  btn = document.getElementById('btn_confirm');
+  btn.onclick = () => {
+    set_confirmation(true);
+  }
+
+  set_confirmation(false);
+
+} // end setup_confirmation_elements()
+
+function set_confirmation(toggle) {
+
+  const get_conf_status = new XMLHttpRequest();
+
+  get_conf_status.open('POST', '/get_conf_status');
+  get_conf_status.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+
+  //when request is completed
+  get_conf_status.onload = () => {
+    //extract JSON data from request
+    const response = JSON.parse(get_conf_status.responseText);
+
+    btn = document.getElementById('btn_confirm');
+    txt = document.getElementById('conf_status');
+    //if the user is confirmed, setup unjoin confirmation
+    if (response.confirmed == true) {
+      txt.innerHTML = "You are confirmed for this ride"
+      btn.className = "btn btn-danger col-5 mr-0";
+      btn.innerHTML = "Unjoin"
+    } else {
+      txt.innerHTML = "You havn't confirmed this ride"
+      btn.className = "btn btn-success col-5 mr-0";
+      btn.innerHTML = "Join"
+    }
+  }; // end onload
+
+  // Add route id to request sent to server
+  const data = new FormData();
+  data.append('user_id', user_id);
+  data.append('ride_id', ride_id);
+  data.append('toggle', toggle);
+
+  // Send request
+  get_conf_status.send(data);
+  return false; // avoid sending the form and creating an HTTP POST request
+
+} // end set_confirmation()
+
+
+function setup_chat_elemnts() {
   // enable display post review button when text is entered
   txt = document.querySelector('#txt_add_post');
   btn = document.querySelector('#btn_add_post');
@@ -16,10 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     add_post();
   }
 
-  load_posts(ride_id)
+} // end setup_chat_elemnts()
 
-});
-// ########################  end DOMContentLoaded ########################
 
 function add_post() {
     const add_comment = new XMLHttpRequest();

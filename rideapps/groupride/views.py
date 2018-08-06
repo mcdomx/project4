@@ -126,6 +126,55 @@ def rides(request):
     return render(request, "groupride/rides.html", context)
 
 
+def get_conf_status(request):
+    ride_id = request.POST.get("ride_id")
+    user_id = request.POST.get("user_id")
+    toggle = request.POST.get("toggle")
+
+    if Ride.confirmed_riders.filter(user.id == user_id).exists():
+        # remove the rider if toggle is true
+        if (toggle):
+            ride.confirmed_riders.remove(user)
+            confirmed = False
+        else:
+            confirmed = True
+    else:
+        # add the rider if toggle is true
+        if (toggle):
+            ride.confirmed_riders.add(user)
+            confirmed = True
+        else:
+            confrimed = False
+
+    context = {
+        "confirmed": confirmed
+    }
+
+    return JsonResponse(context)
+
+
+def toggle_conf_status(request):
+    ride_id = request.POST.get("ride_id")
+    user_id = request.POST.get("user_id")
+    ride = Ride.objects.get(id = ride_id)
+    user = User.objects.get(id = user_id)
+
+    if Ride.confirmed_riders.filter(user.id == user_id).exists():
+        # remove the rider
+        ride.confirmed_riders.remove(user)
+        confirmed = False
+    else:
+        # add the rider
+        ride.confirmed_riders.add(user)
+        confrimed = True
+
+    context = {
+        "confirmed": confirmed
+    }
+
+    return JsonResponse(context)
+
+
 def routes(request):
     routes = Route.objects.values('id', 'route_name', 'origin', 'miles','vertical_feet')
     context = {'routes': routes,}
