@@ -39,19 +39,17 @@
               <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
             </div>
             <a href="/route/{{ride.route.id}}">
-              <div>Route: {{ride.route.route_name}}
-
-              </div>
+              <div>Route: {{ride.route.route_name}}</div>
               <div>
                 <span class="">Distance: {{ride.route.miles}} miles </span>
                 <span class="">({{ride.route.vertical_feet}} feet)</span>
             </a>
                 {% if ride.route.gpxfile %}
-              <a href={{ride.route.gpxfile}} download>
-                <span class="badge badge-pill badge-secondary">Download GPX File</span>
-              </a>
-              {% endif %}
-            </div>
+                  <a href={{ride.route.gpxfile}} download>
+                    <span class="badge badge-pill badge-secondary">Download GPX File</span>
+                  </a>
+                {% endif %}
+              </div>
           </div>
         </a>
       {% endif %}
@@ -70,12 +68,20 @@
           <div>Organizer: {{ride.created_by.first_name|slice:":1" }}.{{ride.created_by.last_name}} </div>
         </div>
         <div>
-          <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
+          <span class="">Departed: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
         </div>
-        <div>
-          <span class="">{{ride.route.miles}} miles </span>
-          <span class="">{{ride.route.vertical_feet}} feet</span>
-        </div>
+        <a href="/route/{{ride.route.id}}">
+          <div>Route: {{ride.route.route_name}}</div>
+          <div>
+            <span class="">Distance: {{ride.route.miles}} miles </span>
+            <span class="">({{ride.route.vertical_feet}} feet)</span>
+        </a>
+            {% if ride.route.gpxfile %}
+              <a href={{ride.route.gpxfile}} download>
+                <span class="badge badge-pill badge-secondary">Download GPX File</span>
+              </a>
+            {% endif %}
+          </div>
       </div>
     </a>
 
