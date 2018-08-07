@@ -54,12 +54,17 @@ def ride(request,ride_id):
 
 
 def route(request, route_id):
-    route = Route.objects.get(pk = route_id)
-    context = {
-        "route": route,
-        "ratings": Review.RATINGS,
-    }
-    return render(request, "groupride/route.html", context)
+    try:
+        route = Route.objects.get(pk = route_id)
+        context = {
+            "route": route,
+            "ratings": Review.RATINGS,
+        }
+        return render(request, "groupride/route.html", context)
+
+    except Route.DoesNotExist:
+        raise Http404('No such route exists. Sorry.')
+
 
 
 def get_reviews(request):
@@ -174,6 +179,10 @@ def routes(request):
     context = {'routes': routes,}
     return render(request, "groupride/routes.html", context)
 
+
+
+
+
 # create a new group ride
 def create_new_ride(request):
     ride_name = request.POST.get("ride_name")
@@ -262,6 +271,17 @@ def get_confirmed_riders(request):
 
     return JsonResponse(context)
 
+# if request.method == 'POST' and request.FILES['myfile']:
+#         myfile = request.FILES['myfile']
+#         fs = FileSystemStorage()
+#         filename = fs.save(myfile.name, myfile)
+#         uploaded_file_url = fs.url(filename)
+#         return render(request, 'core/simple_upload.html', {
+#             'uploaded_file_url': uploaded_file_url
+#         })
+
+
+
 # check if route already exists and create it if it does not
 def create_new_route(request):
 
@@ -269,6 +289,9 @@ def create_new_route(request):
     miles = request.POST.get("miles")
     vertical_feet = request.POST.get("vertical_feet")
     origin = request.POST.get("origin")
+    gpxfile = request.FILES['gpxfile']
+
+    print(gpxfile)
 
     # see if a route with the given name already exists
     try:
@@ -289,6 +312,7 @@ def create_new_route(request):
         new_route.miles = float(miles)
         new_route.vertical_feet = int(vertical_feet)
         new_route.origin = origin
+        new_route.gpxfile = gpxfile
         new_route.save()
 
         context = {

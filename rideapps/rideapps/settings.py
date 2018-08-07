@@ -124,4 +124,5 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-MEDIA_ROOT = ''
+MEDIA_URL = '/uploads/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')

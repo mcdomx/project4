@@ -156,6 +156,7 @@ function create_ride() {
   data.append('route_id',route_id);
   data.append('private_ride', private_ride);
   data.append('invited_rider_list', invited_rider_list);
+
   create_ride.send(data); // Send request
 
   return false; // avoid sending the form

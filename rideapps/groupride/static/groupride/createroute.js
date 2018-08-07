@@ -2,10 +2,12 @@
 document.addEventListener('DOMContentLoaded', () => {
   // wait till page loads before setting up javascript elements
   document.getElementById('btn_create_route').onclick = create_route;
+  document.getElementById('gpxfile').onchange = () => {
+    document.getElementById('txt_gpxfile').innerHTML = document.getElementById('gpxfile').files[0].name;
+  }
 
 });
 // ########################  end DOMContentLoaded ########################
-
 
 // send current cart to server
 function create_route() {
@@ -13,6 +15,7 @@ function create_route() {
   const create_route = new XMLHttpRequest();
   create_route.open('POST', '/create_new_route');
   create_route.setRequestHeader("X-CSRFToken", CSRF_TOKEN);
+  create_route.setRequestHeader("enctype", "multipart/form-data");
 
   route_name = document.getElementById('route_name').value;
   miles = document.getElementById('miles').value;
@@ -39,15 +42,19 @@ function create_route() {
     // clear form if form operation was successful
     if ( message.success == true ) {
       document.getElementById("frm_create_route").reset();
+      document.getElementById("txt_gpxfile").innerHTML = "upload a GPX file ... "
     }
   } //end onload
 
   // Add data to send with request
   const data = new FormData();
+  data.append('enctype', 'multipart/form-data')
   data.append('route_name', document.getElementById('route_name').value);
   data.append('miles', document.getElementById('miles').value);
   data.append('vertical_feet', document.getElementById('vertical_feet').value);
   data.append('origin', document.getElementById('origin').value);
+  file_element = document.getElementById('gpxfile');
+  data.append('gpxfile', file_element.files[0], file_element.files[0].name )
   create_route.send(data); // Send request
 
   return false; // avoid sending the form

@@ -27,6 +27,13 @@
         <div>
           <span class="">Departs: {{ ride.ride_date|date:"SHORT_DATE_FORMAT" }} {{ ride.ride_date|time:"TIME_FORMAT" }} </span>
         </div>
+        <div>Route: {{ride.route.route_name}}
+          {% if ride.route.gpxfile %}
+          <a href={{ride.route.gpxfile}} download>
+            <span class="badge badge-pill badge-secondary">Download GPX File</span>
+          </a>
+          {% endif %}
+        </div>
         <div>
           <span class="">{{ride.route.miles}} miles </span>
           <span class="">{{ride.route.vertical_feet}} feet</span>

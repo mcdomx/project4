@@ -6,8 +6,15 @@
   <div class="container">
     <h2>Route</h2>
 
+
     <div class="route_header shadow border rounded my-2 px-3 py-3">
-      <h4>{{route.route_name}}</h4>
+      <h4>{{route.route_name}}
+        {% if route.gpxfile %}
+        <a href={{route.gpxfile}} download>
+          <span class="badge badge-pill badge-secondary">Download GPX File</span>
+        </a>
+        {% endif %}
+      </h4>
       <span class="">Origin: {{route.origin}} </span>
       <span class="">&nbsp&nbsp {{route.miles}} miles</span>
       <span class="">&nbsp&nbsp {{route.vertical_feet}} feet</span>

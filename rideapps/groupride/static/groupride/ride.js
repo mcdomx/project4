@@ -90,22 +90,13 @@ function add_rider_to_confirmed(username, rider) {
   rider_div.className = "confirmed_rider"
   rider_div.innerHTML = rider;
 
-  
+
 
   listing = document.querySelector('#confirmed_list');
   //add the newest confirmations to the top
   listing.insertBefore(rider_div, listing.firstChild);
 
 } //end add_rider_to_confirmed()
-
-
-// append a remove topping button (- pill)
-
-
-
-  update_modal();
-} // end remove button on click
-
 
 
 // toggle confirmatin status on the server side
