@@ -35,17 +35,7 @@ urlpatterns = [
     re_path(r'^rides/(?P<path>.*)$', serve, {
         'document_root': settings.MEDIA_ROOT,
     }),
+    re_path(r'^(?P<path>.*)$', serve, {
+        'document_root': settings.MEDIA_ROOT,
+    }),
 ]
-
-# if settings.DEBUG:
-#     urlpatterns += [
-#     re_path(r'^route/(?P<path>.*)$', serve, {
-#         'document_root': settings.MEDIA_ROOT,
-#     }),
-#     re_path(r'^ride/(?P<path>.*)$', serve, {
-#         'document_root': settings.MEDIA_ROOT,
-#     }),
-#     re_path(r'^rides/(?P<path>.*)$', serve, {
-#         'document_root': settings.MEDIA_ROOT,
-#     }),
-#     ]

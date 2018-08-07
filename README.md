@@ -1,6 +1,8 @@
 # project4
 CSCI S-33a - Project 4 - GroupRide
 
+Secret key can be set to a local environment variable using "source ./env_variables.sh" at the command line.
+
 TODO:
 [] setup for heroku
 [x] create route page (no map, no file)
